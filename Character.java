@@ -1,3 +1,5 @@
+import java.util.HashMap;
+
 public class Character {
 	
 	// The name of the character
