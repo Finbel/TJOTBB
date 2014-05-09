@@ -11,11 +11,17 @@ public class Main {
 		 */
 		Matrix matrix = new Matrix(3);
 		
+		
 		matrix.createWall(0,0);
 		matrix.createWall(0,2);
 		matrix.createWall(2,0);
 		matrix.createDoor(2,2,true,null);
 		
 		System.out.println(matrix);
+		Disp disp = new Disp();
+		disp.draw(matrix);
+		while(true) {
+			
+		}
 	}
 }
