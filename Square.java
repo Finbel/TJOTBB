@@ -13,7 +13,8 @@ public class Square extends Node
     private ArrayList<Square> neighbours;
     // a map keeping track of what items are in the square.
     private HashMap<String, Item> items;
-    private Character character = null;
+    private Player player = null;
+   // private Mob mob = null;
 
     /**
      * Initially, it has no neighbours or items.
@@ -45,9 +46,19 @@ public class Square extends Node
         items.put(item.getName(), item);
     }
     
-    public void addCharacter(Character character) {
-    	this.character = character;
+    public void addPlayer(Player player) {
+    	this.player = player;
     }
+    
+    public void removePlayer() {
+    	player = null;
+    }
+    /*
+     
+     
+    public void addMob(Mob mob) {
+    	this.mob = mob;
+    }*/
     
     /**
      * Remove an item from this Node.
@@ -70,8 +81,8 @@ public class Square extends Node
         return items.get(name);
     }
     
-    public Character getCharacter() {
-    	return character;
+    public Player getPlayer() {
+    	return player;
     }
     
     /**

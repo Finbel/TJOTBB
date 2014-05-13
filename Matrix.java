@@ -17,7 +17,7 @@ import java.util.HashMap;
 public class Matrix {
 	// A hashmap containing one hashmap for every x-coordinate.
 	private final HashMap<Integer, HashMap<Integer, Node>> matrix;
-	
+	private int size;
 	/**
 	 * Constructs a matrix, size n*n.
 	 * 
@@ -29,7 +29,7 @@ public class Matrix {
 		
 		HashMap<Integer, HashMap<Integer, Node>> a = new HashMap<Integer, HashMap<Integer, Node>>();
 		matrix = a;
-		
+		size = n;
 		// Initiates all x-coordinates and each x-coordinate's HashMap
 		// (y-dimension, each coordinate features one node).
 		for (int i = 0; i < n; i++) {
@@ -115,4 +115,9 @@ public class Matrix {
 		string += "\nKey: '/|/', ' | ' and ' O ' represent walls, doors and spaces, respectively.";
 		return string;
 	}
+	public int getSize() {
+		//TBD!
+		return size;
+	}
+	
 }

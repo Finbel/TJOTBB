@@ -1,3 +1,5 @@
+package Main;
+
 import java.util.HashMap;
 
 public class Character {
@@ -143,9 +145,9 @@ public class Character {
         }
         
         String itemsString = "Your inventory contains: ";
-        for (String key : items.keySet()) {
-            itemsString += key + "; ";
-        }
+        //for (String key : items.keySet()) {
+          //  itemsString += key + "; ";
+        //}
         
         return itemsString.substring(0, itemsString.length()-2) + ".";
     }
