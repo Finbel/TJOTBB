@@ -17,7 +17,7 @@ public class Door extends Square
      * 
      * @param x The x-coordinate.
      * @param y The y-coordinate.
-     * @param isUnlocked The exit's unlocked status.
+     * @param isUnlocked The exit's status.
      * @param key The key that fits the lock (null if there's
      * no lock).
      * 

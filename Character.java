@@ -141,6 +141,10 @@ public class Character {
         return inventory.get(name);
     }
     
+    public boolean hasItem(Item item) {
+        return inventory.containsValue(item);
+    }
+    
     /**
      * Inflicts damage on target.
      * 
@@ -175,23 +179,16 @@ public class Character {
     
     public boolean move(Matrix matrix, Square destination) {
     	if (destination.getCharacter() != null) {
-    		return false;
+    		if (destination.getCharacter().isAlive()) {
+        		return false;
+    		}
     	}
     	if (destination instanceof Door) {
     		if (!((Door)destination).isOpen()) {
-    			if (!((Door)destination).isUnlocked()) {
-    				if (inventory.containsValue(((Door)destination).getKey())) {
-    					((Door)destination).unlock();
-    					((Door)destination).open();
-    					return true;
-    				}
-    				return false;
-    			}
-    			((Door)destination).open();
-    			return true;
-    			
+    			return false;
     		}
     	}
+    	
     	((Square)matrix.getNode(x, y)).removeCharacter();
 		destination.addCharacter(this);
     	x = destination.getX();
@@ -199,6 +196,9 @@ public class Character {
     	if (destination.getItem() != null) {
     		addItem(destination.getItem());
     		destination.removeItem();
+    		if (destination.getItem() instanceof ZombieSlayer) {
+    			damage += ((ZombieSlayer)destination.getItem()).getDamage();
+    		}
     	}
     	return true;
 
@@ -207,10 +207,38 @@ public class Character {
     public void moveRandom(Matrix matrix) {
     	Random random = new Random();
     	LinkedList<Node> neighbours = matrix.neighbours(x, y);
-		Node destination = neighbours.get(random.nextInt(neighbours.size() - 1));
+		Node destination = neighbours.get(random.nextInt(neighbours.size()));
 		if (destination instanceof Square) {
 			move(matrix, (Square)destination);
     	}
+    }
+    
+    public boolean tryOpen(Matrix matrix) {
+    	LinkedList<Node> neighbours = matrix.allNeighbours(x, y);
+    	for (Node neighbour : neighbours) {
+    		if (neighbour instanceof Door) {
+    			if (((Door)neighbour).isOpen()) {
+    				((Door)neighbour).close();
+    				if (inventory.containsValue(((Door)neighbour).getKey())) {
+    					((Door)neighbour).close();
+    				}
+    				return true;
+    			}
+	    		if (!((Door)neighbour).isOpen()) {
+	    			if (!((Door)neighbour).isUnlocked()) {
+	    				if (inventory.containsValue(((Door)neighbour).getKey())) {
+	    					((Door)neighbour).unlock();
+	    					((Door)neighbour).open();
+	    					return true;
+	    				}
+	    				return false;
+	    			}
+	    			((Door)neighbour).open();
+	    			return true;
+    	    	}
+    		}
+    	}
+    	return false;
     }
 	
     /**

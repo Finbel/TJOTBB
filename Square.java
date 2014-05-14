@@ -13,6 +13,7 @@ public class Square extends Node
     // a map keeping track of what items are in the square.
     protected Item item = null;
     protected Character character = null;
+    protected Character deadCharacter = null;
     protected Player player = null;
 
     /**
@@ -42,6 +43,14 @@ public class Square extends Node
      */
     public void addItem(Item item) {
         this.item = item;
+    }
+    
+    public void addDeadCharacter(Character character) {
+        this.deadCharacter = character;
+    }
+    
+    public Character getDeadCharacter() {
+        return deadCharacter;
     }
     
     public void addCharacter(Character character) {

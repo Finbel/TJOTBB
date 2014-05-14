@@ -8,6 +8,7 @@ import java.util.Random;
 
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 
@@ -41,7 +42,6 @@ public class Disp {
 			while (true) {
 				draw();
 				Display.update();
-				// System.out.println(Mouse.getX() + " " + Mouse.getY()) ;
 				if (Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)) {
 					System.out.print("FILTH");
 					Display.destroy();
@@ -57,7 +57,38 @@ public class Disp {
 						System.exit(0);
 						break;
 					}
-					if (Keyboard.getEventKey() == Keyboard.KEY_UP) {
+					
+					if (Keyboard.getEventKey() == Keyboard.KEY_SPACE) {
+						if (!Keyboard.getEventKeyState()) {
+							if (player.hasItem(items.get("zombieslayer"))) {
+								Random random = new Random();
+								if (random.nextInt(2) == 1) {
+									mobsMove(3);
+								}
+								Character character = ((ZombieSlayer)items.get("zombieslayer")).shoot(matrix, player, nodeSize(), Mouse.getX(), RESOLUTION -  Mouse.getY());
+								if (character != null && character.isAlive()) {
+									player.hit(character);
+									System.out.println(player.damage + " damage inflicted upon " + character + "(health = " + character.getHealth() + ")");
+									if (!character.isAlive()) {
+										Square square = (Square)matrix.getNode(character.getX(), character.getY());
+										square.removeCharacter();
+										square.addDeadCharacter(character);
+									}
+								}
+								turns++;
+							}
+						}
+					}
+					
+					if (Keyboard.getEventKey() == Keyboard.KEY_LCONTROL) {
+						if (!Keyboard.getEventKeyState()) {
+							if(player.tryOpen(matrix)) {
+								turns++;
+							}
+						}
+					}
+
+					if (Keyboard.getEventKey() == Keyboard.KEY_W) {
 						if (!Keyboard.getEventKeyState()) {
 							Node neighbour = matrix.getNode(player.getX(),
 									player.getY() - 1);
@@ -66,9 +97,8 @@ public class Disp {
 								turns++;
 							}
 						}
-
 					}
-					if (Keyboard.getEventKey() == Keyboard.KEY_DOWN) {
+					if (Keyboard.getEventKey() == Keyboard.KEY_S) {
 						if (!Keyboard.getEventKeyState()) {
 							Node neighbour = matrix.getNode(player.getX(),
 									player.getY() + 1);
@@ -78,7 +108,7 @@ public class Disp {
 							}
 						}
 					}
-					if (Keyboard.getEventKey() == Keyboard.KEY_LEFT) {
+					if (Keyboard.getEventKey() == Keyboard.KEY_A) {
 						if (!Keyboard.getEventKeyState()) {
 							Node neighbour = matrix.getNode(player.getX() - 1,
 									player.getY());
@@ -88,7 +118,8 @@ public class Disp {
 							}
 						}
 					}
-					if (Keyboard.getEventKey() == Keyboard.KEY_RIGHT) {
+					
+					if (Keyboard.getEventKey() == Keyboard.KEY_D) {
 						if (!Keyboard.getEventKeyState()) {
 							Node neighbour = matrix.getNode(player.getX() + 1,
 									player.getY());
@@ -100,38 +131,44 @@ public class Disp {
 					}
 					
 					if (turns >= 2) {
-						 for (Mob mob : mobs) {
-							 for (int i = 0; i < 3; i++) {
-								 turns = 0;
-								 mob.act(matrix, player);
-								 draw();
-								 Display.update();
-								 System.out.println("HP: " + player.getHealth());
-								 System.out.println("Is the filth alive? " + player.isAlive());
-							 }
-							 if (!player.isAlive) {
-								 System.out.println("DEAD AND ROTTEN FILTH");
-								 System.exit(0);
-							 }
-						}
+						mobsMove(3);
+						turns = 0;
+					}
+					if (!player.isAlive) {
+						 System.out.println("DEAD AND ROTTEN FILTH");
+						 System.exit(0);
 					}
 				}
 			}
 		}
 	}
+	
+	public static void mobsMove(int k) {
+		 for (Mob mob : mobs) {
+			 for (int i = 0; i < k; i++) {
+				 mob.act(matrix, player);
+				 draw();
+				 Display.update();
+				 //System.out.println("HP: " + player.getHealth());
+				 //System.out.println("Is the filth alive? " + player.isAlive());
+			 }
+		}
+	}
+	
 
 	public static void draw() {
+		int nodeSize = nodeSize();
 		int size = matrix.getSize();
-		int nodeSize = RESOLUTION / size;
-
 		for (int i = 0; i < size; i++) {
 			for (int j = 0; j < size; j++) {
 				Node node = matrix.getNode(i, j);
+				
 				if (node instanceof Wall) {
 					glColor3f(0f, 0f, 0f);
 					glRectf(i * nodeSize, j * nodeSize,
 							i * nodeSize + nodeSize, j * nodeSize + nodeSize);
 				}
+				
 				if (node instanceof Door) {
 					if (((Door)node).isOpen()) {
 						glColor3f(1f, 1f, 1f);
@@ -143,30 +180,36 @@ public class Disp {
 								i * nodeSize + nodeSize, j * nodeSize + nodeSize);
 					}
 				}
+				
 				if (node instanceof Space) {
 					glColor3f(0.5f, 0.5f, 0.5f);
 					glRectf(i * nodeSize, j * nodeSize,
 							i * nodeSize + nodeSize, j * nodeSize + nodeSize);
 				}
+				
 				if (node instanceof Square) {
 					Square square = (Square) node;
+					if (square.getDeadCharacter() != null) {
+						glColor3f(1f, 0f, 0f);
+						glRectf(i * nodeSize, j * nodeSize, i * nodeSize + nodeSize, j * nodeSize + nodeSize);
+					}
 					if (square.getCharacter() != null) {
 						if (square.getCharacter() instanceof Player) {
 							glColor3f(0.3f, 0.5f, 0.1f);
-							glRectf(i * nodeSize, j * nodeSize, i * nodeSize
-									+ nodeSize, j * nodeSize + nodeSize);
+							glRectf(i * nodeSize, j * nodeSize, i * nodeSize + nodeSize, j * nodeSize + nodeSize);
 						} else if (square.getCharacter() instanceof Mob) {
 							Random r1 = new Random();
-							glColor3f(r1.nextFloat(), r1.nextFloat(),
-									r1.nextFloat());
-							glRectf(i * nodeSize, j * nodeSize, i * nodeSize
-									+ nodeSize, j * nodeSize + nodeSize);
+							glColor3f(r1.nextFloat(), r1.nextFloat(), r1.nextFloat());
+							glRectf(i * nodeSize, j * nodeSize, i * nodeSize + nodeSize, j * nodeSize + nodeSize);
 						}
 					} else if (square.getItem() != null) {
 						if (square.getItem() instanceof Key) {
 							glColor3f(1f, 1f, 0f);
-							glRectf(i * nodeSize, j * nodeSize, i * nodeSize
-									+ nodeSize, j * nodeSize + nodeSize);
+							glRectf(i * nodeSize, j * nodeSize, i * nodeSize + nodeSize, j * nodeSize + nodeSize);
+						}
+						else if (square.getItem() instanceof ZombieSlayer) {
+							glColor3f(0.5f, 0.3f, 0.8f);
+							glRectf(i * nodeSize, j * nodeSize, i * nodeSize + nodeSize, j * nodeSize + nodeSize);
 						}
 					}
 				}
@@ -192,6 +235,7 @@ public class Disp {
 		initializeLevel(size);
 		
 		addKey("key1", true, 13, 12);
+		addZombieSlayer("zombieslayer", true, 2, 3);
 		
 		matrix.createWall(10, 1);
 		matrix.createWall(10, 2);
@@ -226,9 +270,20 @@ public class Disp {
 		items.put(item.getName(), item);
 		((Square) matrix.getNode(x, y)).addItem(item);
 	}
+	
+	public static void addZombieSlayer(String name, boolean questItem, int x, int y) {
+		ZombieSlayer item = new ZombieSlayer(name, questItem, 20, 150);
+		items.put(item.getName(), item);
+		((Square) matrix.getNode(x, y)).addItem(item);
+	}
 
 	public static void addPlayer(String name, int health, int damage, int x,int y) {
 		player = new Player(name, health, damage, x, y);
 		((Square) matrix.getNode(x, y)).addCharacter(player);
+	}
+	
+	public static int nodeSize() {
+		int size = matrix.getSize();
+		return RESOLUTION/size;
 	}
 }

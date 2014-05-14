@@ -22,6 +22,9 @@ public class Mob extends Character{
 	}
 	
 	public void act(Matrix matrix, Player player) {
+		if (!isAlive) {
+			return;
+		}
 		LinkedList<Node> neighbours = matrix.allNeighbours(x, y);
 		if (neighbours.contains(matrix.getNode(player.getX(), player.getY()))) {
 			hit(player);
