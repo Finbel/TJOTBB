@@ -10,7 +10,7 @@ public class Player extends Character{
 	 * @param x
 	 * @param y
 	 */
-	public Player(String name, int health, int x, int y){
-		super(name, health, x, y);
+	public Player(String name, int health, int damage, int x, int y){
+		super(name, health, damage, x, y);
 	}
 }

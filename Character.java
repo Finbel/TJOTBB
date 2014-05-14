@@ -1,20 +1,28 @@
 package Main;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Random;
 
 public class Character {
 	
 	// The name of the character
-	private String name;
+	protected String name;
 	
 	// the health of the character
-	private int health;
+	protected int health;
+	
+	// the damage of the character
+	protected int damage;
+	
+	// the alive status of the character
+	protected boolean isAlive = true;
 	
 	// x and y position to keep track of where the player is.
-	private int x;
-	private int y;
+	protected int x;
+	protected int y;
 	//A HashMap over the items in the characters inventory.
-	private HashMap<String, Item> inventory;
+	protected HashMap<String, Item> inventory;
 	
 
 	/**
@@ -25,9 +33,10 @@ public class Character {
 	 * @param x 		The X-coordinate of the character
 	 * @param y			The Y-coordinate of the character
 	 */
-	public Character(String name, int health, int x, int y){
+	public Character(String name, int health, int damage, int x, int y){
 		this.name = name;
 		this.health = health;
+		this.damage = damage;
 		this.x = x;
 		this.y = y;
 	}
@@ -48,6 +57,15 @@ public class Character {
 	 */
 	public int getHealth(){
 		return health;
+	}
+	
+	/**
+	 * Returns true if character is alive
+	 * 
+	 * @return true if character is alive
+	 */
+	public boolean isAlive(){
+		return isAlive;
 	}
 	
 	/**
@@ -124,6 +142,27 @@ public class Character {
     }
     
     /**
+     * Inflicts damage on target.
+     * 
+     * @param character
+     */
+    public void hit(Character target) {
+    	target.gotHit(damage);
+    }
+    
+    /**
+     * Receives damage.
+     * 
+     * @param character
+     */
+    public void gotHit(int damage) {
+    	health -= damage;
+    	if(health <= 0) {
+    		isAlive = false;
+    	}
+    }
+    
+    /**
      * Removes the item in players inventory with the name "name".
      * It then returns this item.
      * 
@@ -132,6 +171,27 @@ public class Character {
      */
     public Item removeItem(String name) {
         return inventory.remove(name);
+    }
+    
+    public boolean move(Matrix matrix, Square destination) {
+    	if (destination.getCharacter() != null) {
+    		return false;
+    	}
+    	((Square)matrix.getNode(x, y)).removeCharacter();
+		destination.addCharacter(this);
+    	x = destination.getX();
+    	y = destination.getY();
+    	return true;
+
+    }
+    
+    public void moveRandom(Matrix matrix) {
+    	Random random = new Random();
+    	LinkedList<Node> neighbours = matrix.neighbours(x, y);
+		Node destination = neighbours.get(random.nextInt(neighbours.size() - 1));
+		if (destination instanceof Square) {
+			move(matrix, (Square)destination);
+    	}
     }
 	
     /**

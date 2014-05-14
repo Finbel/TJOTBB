@@ -1,6 +1,7 @@
 package Main;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 
 /**
  * A matrix of nodes.
@@ -90,6 +91,58 @@ public class Matrix {
 	public void createSpace(int x, int y) {
 		matrix.get(x).remove(y);
 		matrix.get(x).put(y, new Space(x, y));
+	}
+	
+	/**
+	 * Returns all neighbours to the Node with
+	 * the coordinates x and y.
+	 * 
+	 * @param x
+	 * @param y
+	 * @return all neighbours.
+	 */
+	public LinkedList<Node> neighbours(int x, int y) {
+		LinkedList<Node> neighbours = new LinkedList<Node>();
+		// Prevent Nodes on the edge of the map from being added as neighbours.
+		if (!(x - 1 == 0 && x - 1 == size && y == 0 && y == size)) {
+			neighbours.add(getNode(x - 1, y));
+		}
+		if (!(x + 1 == 0 && x + 1 == size && y == 0 && y == size)) {
+			neighbours.add(getNode(x + 1, y));
+		}
+		if (!(x == 0 && x == size && y - 1 == 0 && y - 1 == size)) {
+			neighbours.add(getNode(x, y - 1));
+		}
+		if (!(x == 0 && x == size && y + 1 == 0 && y + 1 == size)) {
+			neighbours.add(getNode(x, y + 1));
+		}
+		
+		return neighbours;
+	}
+	
+	/**
+	 * Returns all neighbours (inluding diagonal) to the Node with
+	 * the coordinates x and y.
+	 * 
+	 * @param x
+	 * @param y
+	 * @return all neighbours.
+	 */
+	public LinkedList<Node> allNeighbours(int x, int y) {
+		LinkedList<Node> neighbours = new LinkedList<Node>();
+		int thisX = x - 1;
+		int thisY = y - 1;
+		// Prevent Nodes on the edge of the map from being added as neighbours.
+		for (int i = 0; i < 3; i++) {
+			for (int j = 0; j < 3; j++) {
+				if (i == 1 && j == 1) {
+					continue;
+				}
+				neighbours.add(getNode(thisX + i, thisY + j));
+			}
+		}
+		
+		return neighbours;
 	}
 	
 	/**

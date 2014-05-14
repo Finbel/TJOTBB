@@ -7,8 +7,8 @@ package Main;
 public class Node
 {
     // the coordinates of the Node.
-    private int x;
-    private int y;
+    protected int x;
+    protected int y;
 
     /**
      * Initially, it has no exits or items.
@@ -20,6 +20,24 @@ public class Node
         this.x = x;
         this.y = y;
     }
+    
+    /**
+	 * Return the Y-coordinate of this Node.
+	 * 
+	 * @return y
+	 */
+	public int getY(){
+		return y;
+	}
+	
+	/**
+	 * Return the X-coordinate of this Node.
+	 * 
+	 * @return x
+	 */
+	public int getX(){
+		return x;
+	}
     
     public String toString() {
     	return "Node at (" + x + ", " + y + ").";

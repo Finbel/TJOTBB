@@ -2,24 +2,26 @@ package Main;
 
 import static org.lwjgl.opengl.GL11.*;
 
-import java.sql.Time;
-import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Random;
 
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
-import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 
 public class Disp {
 	public static void main(String[] args) {
+		int turns = 0;
 		Matrix matrix = new Matrix(10);
-		matrix.createDoor(0, 2, true, null);
 		matrix.createWall(3, 4);
-		Player player = new Player("dffg", 0, 4, 5);
-		Square square = (Square) matrix.getNode(4, 5);
-		square.addPlayer(player);
+		Player player = new Player("player", 100, 50, 4, 5);
+		((Square)matrix.getNode(4, 5)).addCharacter(player);
+		
+		LinkedList<Character> mobs = new LinkedList<Character>();
+		Mob mob1 = new Mob("Zombie", 100, 25, 8, 8);
+		mobs.add(mob1);
+		((Square)matrix.getNode(8, 8)).addCharacter(mob1);
 
 		System.out.println(matrix);
 		try {
@@ -36,6 +38,7 @@ public class Disp {
 		glMatrixMode(GL_MODELVIEW);
 		makeRoom(matrix);
 		matrix.createDoor(0, 2, true, null);
+		matrix.createDoor(9, 6, true, null);
 		while (!Display.isCloseRequested()) {
 			glClear(GL_COLOR_BUFFER_BIT);
 			Display.update();
@@ -51,78 +54,79 @@ public class Disp {
 					break;
 				}
 				Display.update();
+				while (turns != 2) {
+				draw(matrix);	
+				Display.update();
 				while (Keyboard.next()) {
+					if (Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)) {
+						System.out.print("FILTH");
+						Display.destroy();
+						System.exit(0);
+						break;
+					}
 					if (Keyboard.getEventKey() == Keyboard.KEY_UP) {
 						if (!Keyboard.getEventKeyState()) {
 							Node neighbour = matrix.getNode(player.getX(), player.getY() - 1);
-							System.out.println(neighbour instanceof Square);
 							if (neighbour instanceof Square) {
-								Node node = matrix.getNode(player.getX(), player.getY());
-								player.setY(player.getY() - 1);
-								if (node instanceof Square) {
-									((Square) node).removePlayer();
-									System.out.println(((Square) node).getPlayer());
-								}
-								((Square) neighbour).addPlayer(player);
+								player.move(matrix, (Square)neighbour);
+								turns++;
 							}
 						}
+						
 					}
 					if (Keyboard.getEventKey() == Keyboard.KEY_DOWN) {
 						if (!Keyboard.getEventKeyState()) {
 							Node neighbour = matrix.getNode(player.getX(), player.getY() + 1);
-							System.out.println(neighbour instanceof Square);
 							if (neighbour instanceof Square) {
-								Node node = matrix.getNode(player.getX(), player.getY());
-								player.setY(player.getY() + 1);
-								if (node instanceof Square) {
-									((Square) node).removePlayer();
-									System.out.println(((Square) node).getPlayer());
-								}
-								((Square) neighbour).addPlayer(player);
+								player.move(matrix, (Square)neighbour);
+								turns++;
 							}
 						}
 					}
 					if (Keyboard.getEventKey() == Keyboard.KEY_LEFT) {
 						if (!Keyboard.getEventKeyState()) {
 							Node neighbour = matrix.getNode(player.getX() -1, player.getY());
-							System.out.println(neighbour instanceof Square);
 							if (neighbour instanceof Square) {
-								Node node = matrix.getNode(player.getX(), player.getY());
-								player.setX(player.getX() -1);
-								if (node instanceof Square) {
-									((Square) node).removePlayer();
-									System.out.println(((Square) node).getPlayer());
-								}
-								((Square) neighbour).addPlayer(player);
+								player.move(matrix, (Square)neighbour);
+								turns++;
 							}
 						}
 					}
 					if (Keyboard.getEventKey() == Keyboard.KEY_RIGHT) {
 						if (!Keyboard.getEventKeyState()) {
 							Node neighbour = matrix.getNode(player.getX()+1, player.getY());
-							System.out.println(neighbour instanceof Square);
 							if (neighbour instanceof Square) {
-								Node node = matrix.getNode(player.getX(), player.getY());
-								player.setX(player.getX() + 1);
-								if (node instanceof Square) {
-									((Square) node).removePlayer();
-									System.out.println(((Square) node).getPlayer());
-								}
-								((Square) neighbour).addPlayer(player);
+								player.move(matrix, (Square)neighbour);
+								turns++;
 							}
 						}
 					}
+					if(turns >= 2) {
+						for (int i = 0; i < 3; i++) {
+							mob1.act(matrix, player);
+							draw(matrix);
+							Display.update();
+							System.out.println("HP: " + player.getHealth());
+							System.out.println("Is the filth alive? " + player.isAlive());
+						}
+						if (!player.isAlive) {
+							System.out.println("DEAD AND ROTTEN FILTH");
+							System.exit(0);
+						}
+						turns = 0;
+						break;
+					}
+				}
 				}
 			}
 		}
 	}
 
 	public static void draw(Matrix matrix) {
-		Node node;
 		int size = matrix.getSize();
 		for (int i = 0; i < size; i++) {
 			for (int j = 0; j < size; j++) {
-				node = matrix.getNode(i, j);
+				Node node = matrix.getNode(i, j);
 				if (node instanceof Wall) {
 					glColor3f(0f, 0f, 0f);
 					glRectf(i * 50, j * 50, i * 50 + 50, j * 50 + 50);
@@ -136,18 +140,22 @@ public class Disp {
 					glRectf(i * 50, j * 50, i * 50 + 50, j * 50 + 50);
 				}
 				if (node instanceof Square) {
-					Square square = (Square) node;
-					if (square.getPlayer() != null) {
+					Square square = (Square)node;
+					if (square.getCharacter() != null) {
+						if(square.getCharacter() instanceof Player) {
+						glColor3f(0.3f, 0.5f, 0.1f);
+						glRectf(i * 50, j * 50, i * 50 + 50, j * 50 + 50);
+						}
+
+						if(square.getCharacter() instanceof Mob) {
 						Random r1 = new Random();
 						glColor3f(r1.nextFloat(), r1.nextFloat(), r1.nextFloat());
 						glRectf(i * 50, j * 50, i * 50 + 50, j * 50 + 50);
+						}
 					}
 				}
-
 			}
-
 		}
-
 	}
 
 	public static void makeRoom(Matrix matrix) {
