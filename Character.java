@@ -22,7 +22,7 @@ public class Character {
 	protected int x;
 	protected int y;
 	//A HashMap over the items in the characters inventory.
-	protected HashMap<String, Item> inventory;
+	protected HashMap<String, Item> inventory = new HashMap<String, Item>();
 	
 
 	/**
@@ -177,10 +177,29 @@ public class Character {
     	if (destination.getCharacter() != null) {
     		return false;
     	}
+    	if (destination instanceof Door) {
+    		if (!((Door)destination).isOpen()) {
+    			if (!((Door)destination).isUnlocked()) {
+    				if (inventory.containsValue(((Door)destination).getKey())) {
+    					((Door)destination).unlock();
+    					((Door)destination).open();
+    					return true;
+    				}
+    				return false;
+    			}
+    			((Door)destination).open();
+    			return true;
+    			
+    		}
+    	}
     	((Square)matrix.getNode(x, y)).removeCharacter();
 		destination.addCharacter(this);
     	x = destination.getX();
     	y = destination.getY();
+    	if (destination.getItem() != null) {
+    		addItem(destination.getItem());
+    		destination.removeItem();
+    	}
     	return true;
 
     }

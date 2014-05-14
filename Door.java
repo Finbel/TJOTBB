@@ -6,9 +6,10 @@ package Main;
 public class Door extends Square
 {
     // determines whether the exit is unlocked or not.
-    private boolean unlocked = true;
+    private boolean isUnlocked = true;
     // stores what item is needed to unlock the exit.
     private Item key;
+    private boolean isOpen = false;
 	
     /**
      * Creates a door.
@@ -16,18 +17,22 @@ public class Door extends Square
      * 
      * @param x The x-coordinate.
      * @param y The y-coordinate.
-     * @param unlocked The exit's status.
+     * @param isUnlocked The exit's unlocked status.
      * @param key The key that fits the lock (null if there's
      * no lock).
      * 
      */
-    public Door(int x, int y, boolean unlocked, Item key) {
+    public Door(int x, int y, boolean isUnlocked, Item key) {
     	super(x, y);
     	this.key = key;
     	// prevents creating locked doors if no key is present.
     	if (key != null) {
-    		this.unlocked = unlocked;
+    		this.isUnlocked = isUnlocked;
     	}
+    }
+   
+    public void setKey(Key key) {
+    	this.key = key;
     }
     
     /**
@@ -35,7 +40,7 @@ public class Door extends Square
      */
     public void lock() {
     	if (key != null) {
-    		unlocked = false;
+    		isUnlocked = false;
     	}
     }
     
@@ -44,7 +49,7 @@ public class Door extends Square
      */
     public void unlock() {
     	if (key != null) {
-    		unlocked = false;
+    		isUnlocked = true;
     	}
     }
     
@@ -57,13 +62,25 @@ public class Door extends Square
         return key;
     }
     
+    public void open() {
+        isOpen = true;
+    }
+    
+    public void close() {
+        isOpen = false;
+    }
+    
+    public boolean isOpen() {
+        return isOpen;
+    }
+    
     /**
      * Return the status of the exit (unlocked
      * or locked).
      * 
      * @return true if exit is unlocked.
      */
-    public boolean unlocked() {
-        return unlocked;
+    public boolean isUnlocked() {
+        return isUnlocked;
     }
 }

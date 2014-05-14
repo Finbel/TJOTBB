@@ -1,6 +1,5 @@
 package Main;
 
-import java.util.HashMap;
 import java.util.ArrayList;
 
 /**
@@ -12,7 +11,7 @@ public class Square extends Node
     // an arraylist keeping track of the square's neighbours.
     private ArrayList<Square> neighbours;
     // a map keeping track of what items are in the square.
-    private HashMap<String, Item> items;
+    protected Item item = null;
     protected Character character = null;
     protected Player player = null;
 
@@ -25,7 +24,6 @@ public class Square extends Node
     public Square(int x, int y) {
     	super(x, y);
         neighbours = new ArrayList<Square>();
-        items = new HashMap<String, Item>();
     }
     
     /**
@@ -43,7 +41,7 @@ public class Square extends Node
      * @param item The item to be placed.
      */
     public void addItem(Item item) {
-        items.put(item.getName(), item);
+        this.item = item;
     }
     
     public void addCharacter(Character character) {
@@ -60,8 +58,8 @@ public class Square extends Node
      * @param name The name of the item to be removed.
      * @return The item removed. Null if unsuccessful.
      */
-    public Item removeItem(String name) {
-        return items.remove(name);
+    public void removeItem() {
+        item = null;
     }
     
     /**
@@ -71,8 +69,8 @@ public class Square extends Node
      * @param name The name to look for.
      * @return The item whose name is "name".
      */
-    public Item getItem(String name) {
-        return items.get(name);
+    public Item getItem() {
+        return item;
     }
     
     public Character getCharacter() {
@@ -86,23 +84,5 @@ public class Square extends Node
      */
     public ArrayList<Square> getNeighbours() {
         return neighbours;
-    }
-    
-    /**
-     * Return a string listing all items in this square.
-     * 
-     * @return A string listing all items.
-     */
-    public String getItemsString() {
-        if (items.isEmpty()) {
-            return "The square doesn't seem to contain anything of interest.";
-        }
-        
-        String itemsString = "Items of interest: ";
-        for (String key : items.keySet()) {
-            itemsString += key + "; ";
-        }
-        
-        return itemsString.substring(0, itemsString.length()-2) + ".";
     }
 }

@@ -6,6 +6,7 @@ import java.util.LinkedList;
 
 
 public class Mob extends Character{
+	private int range;
 
 	/**
 	 * Creates a player with name "name", health "health" and (x,y)-coordinates x and y.
@@ -15,8 +16,9 @@ public class Mob extends Character{
 	 * @param x
 	 * @param y
 	 */
-	public Mob(String name, int health, int damage, int x, int y){
+	public Mob(String name, int health, int damage, int x, int y, int range){
 		super(name, health, damage, x, y);
+		this.range = range;
 	}
 	
 	public void act(Matrix matrix, Player player) {
@@ -35,11 +37,11 @@ public class Mob extends Character{
 		
 		ArrayList<Node> shortestRoute = shortestRoute(matrix, player, visited);
 		
-		if (shortestRoute.size() > 10) {
+		if (shortestRoute == null) {
 			moveRandom(matrix);
-		} else {
-			move(matrix, (Square)shortestRoute.get(1));
+			return;
 		}
+		move(matrix, (Square)shortestRoute.get(1));
 	}
 	
 	/** 
@@ -66,6 +68,10 @@ public class Mob extends Character{
 			
 			if (current == matrix.getNode(player.getX(), player.getY())) {
 				return currentRoute;
+			}
+			
+			if (currentRoute.size() > range) {
+				return null;
 			}
 			
 			LinkedList<Node> neighbours = matrix.neighbours(current.getX(), current.getY());
