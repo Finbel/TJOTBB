@@ -1,6 +1,7 @@
 package Main;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Class Square - represents a square (door or space) and
@@ -11,7 +12,7 @@ public class Square extends Node
     // an arraylist keeping track of the square's neighbours.
     private ArrayList<Square> neighbours;
     // a map keeping track of what items are in the square.
-    protected Item item = null;
+    protected HashMap<String, Item> items = new HashMap<String, Item>();
     protected Character character = null;
     protected Character deadCharacter = null;
     protected Player player = null;
@@ -42,7 +43,7 @@ public class Square extends Node
      * @param item The item to be placed.
      */
     public void addItem(Item item) {
-        this.item = item;
+        items.put(item.getName(), item);
     }
     
     public void addDeadCharacter(Character character) {
@@ -61,25 +62,16 @@ public class Square extends Node
     	character = null;
     }
     
-    /**
-     * Remove an item from this Node.
-     *
-     * @param name The name of the item to be removed.
-     * @return The item removed. Null if unsuccessful.
-     */
-    public void removeItem() {
-        item = null;
+    public void removeItems() {
+        items.clear();
     }
     
-    /**
-     * Return item whose name is "name". If not found,
-     * return null.
-     * 
-     * @param name The name to look for.
-     * @return The item whose name is "name".
-     */
-    public Item getItem() {
-        return item;
+
+    public HashMap<String, Item> getItems() {
+    	if (items.isEmpty()) {
+    		return null;
+    	}
+        return items;
     }
     
     public Character getCharacter() {

@@ -7,21 +7,8 @@ public class HealthPack extends Item {
 		this.damage = damage;
 		this.range = range;		// TODO Auto-generated constructor stub
 	}
-	public Character heal(Matrix matrix, Player player, int ns, int shootX, int shootY) {
-	int nx = shootX/ns;
-	int ny = shootY/ns;
-	Node node = matrix.getNode(nx, ny);
-	if (!(node instanceof Square)) {
-		return null;
-	}
-	double length = Math.sqrt((shootX - player.getX())*(shootX - player.getX()) + (shootY - player.getY())*(shootY - player.getY()));
-	if (((int)length) / ns <= range) {
-		Mob mob = (Mob)((Square)node).getCharacter();
-		if(mob != null) {
-			return mob;
-		}
-	}
-	return null;
+	public void heal(Matrix matrix, Player player) {
+		player.health += damage;
 	
 }
 

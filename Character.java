@@ -128,6 +128,9 @@ public class Character {
 	 */
     public void addItem(Item item) {
         inventory.put(item.getName(), item);
+		if (item instanceof ZombieSlayer) {
+			damage += ((ZombieSlayer)item).getDamage();
+		}
     }
     
     /**
@@ -181,6 +184,12 @@ public class Character {
         return inventory.remove(name);
     }
     
+    public HashMap<String, Item> removeInventory() {
+    	HashMap<String, Item> removedInventory = inventory;
+    	inventory.clear();
+    	return removedInventory;
+    }
+    
     public boolean move(Matrix matrix, Square destination) {
     	if (destination.getCharacter() != null) {
     		if (destination.getCharacter().isAlive()) {
@@ -197,12 +206,12 @@ public class Character {
 		destination.addCharacter(this);
     	x = destination.getX();
     	y = destination.getY();
-    	if (destination.getItem() != null) {
-    		addItem(destination.getItem());
-    		destination.removeItem();
-    		if (destination.getItem() instanceof ZombieSlayer) {
-    			damage += ((ZombieSlayer)destination.getItem()).getDamage();
+    	HashMap<String, Item> takenItems = destination.getItems();
+    	if (destination.getItems() != null) {
+    		for (Item item : takenItems.values()) {
+    			addItem(item);
     		}
+    		destination.removeItems();
     	}
     	return true;
 
@@ -233,6 +242,7 @@ public class Character {
 	    				if (inventory.containsValue(((Door)neighbour).getKey())) {
 	    					((Door)neighbour).unlock();
 	    					((Door)neighbour).open();
+	    					removeItem((((Door)neighbour).getKey()).getName());
 	    					return true;
 	    				}
 	    				return false;
@@ -256,9 +266,9 @@ public class Character {
         }
         
         String itemsString = "Your inventory contains: ";
-        //for (String key : items.keySet()) {
-          //  itemsString += key + "; ";
-        //}
+        for (String key : inventory.keySet()) {
+            itemsString += "\n" + key + ";";
+        }
         
         return itemsString.substring(0, itemsString.length()-2) + ".";
     }
