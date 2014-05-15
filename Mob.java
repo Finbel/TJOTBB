@@ -19,7 +19,11 @@ public class Mob extends Character{
 		super(name, health, damage, x, y);
 		this.range = range;
 	}
-	
+	/**
+	 * makes the move around, charge players or stay dead, for good
+	 * @param matrix
+	 * @param player
+	 */
 	public void act(Matrix matrix, Player player) {
 		if (!isAlive) {
 			return;

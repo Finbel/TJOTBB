@@ -143,11 +143,18 @@ public class Character {
     public Item getItem(String name) {
         return inventory.get(name);
     }
-    
+    /** returns damage
+     * 
+     * @return damage
+     */
     public int getDamage() {
         return damage;
     }
-    
+    /**
+     * checks if character has the specified item
+     * @param item
+     * @return
+     */
     public boolean hasItem(Item item) {
         return inventory.containsValue(item);
     }
@@ -183,15 +190,26 @@ public class Character {
     public Item removeItem(String name) {
         return inventory.remove(name);
     }
-    
+    /**
+     * gets the inventory
+     * @return
+     */
     public HashMap<String, Item> getInventory() {
     	return inventory;
     }
-    
+    /**
+     * clears inventory
+     */
     public void clearInventory() {
     	inventory.clear();
     }
-    
+    /**
+     * moves character one step, also checks if there is a requirement for 
+     * walking on that square
+     * @param matrix
+     * @param destination
+     * @return
+     */
     public boolean move(Matrix matrix, Square destination) {
     	if (destination.getCharacter() != null) {
     		if (destination.getCharacter().isAlive()) {
@@ -218,7 +236,10 @@ public class Character {
     	return true;
 
     }
-    
+    /**
+     * method used for random movement
+     * @param matrix
+     */
     public void moveRandom(Matrix matrix) {
     	Random random = new Random();
     	LinkedList<Node> neighbours = matrix.neighbours(x, y);
@@ -227,7 +248,9 @@ public class Character {
 			move(matrix, (Square)destination);
     	}
     }
-    
+    /*
+     * a method for opening doors
+     */
     public boolean tryOpen(Matrix matrix) {
     	LinkedList<Node> neighbours = matrix.allNeighbours(x, y);
     	for (Node neighbour : neighbours) {

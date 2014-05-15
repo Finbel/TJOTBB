@@ -30,7 +30,10 @@ public class Door extends Square
     		this.isUnlocked = isUnlocked;
     	}
     }
-   
+   /**
+    * sets key required to open door
+    * @param key
+    */
     public void setKey(Key key) {
     	this.key = key;
     }
@@ -61,15 +64,22 @@ public class Door extends Square
     public Item getKey() {
         return key;
     }
-    
+    /**
+     * opens door
+     */
     public void open() {
         isOpen = true;
     }
-    
+    /**
+     * closes door
+     */
     public void close() {
         isOpen = false;
     }
-    
+    /**
+     * checks if door is open or closed
+     * @return
+     */
     public boolean isOpen() {
         return isOpen;
     }
