@@ -47,7 +47,7 @@ public class Square extends Node
     }
     
     public void addDeadCharacter(Character character) {
-        this.deadCharacter = character;
+        deadCharacter = character;
     }
     
     public Character getDeadCharacter() {

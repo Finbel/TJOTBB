@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Random;
 import java.io.IOException;
+
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
@@ -33,7 +34,7 @@ public class Disp {
 	private static Player player;
 	private static LinkedList<Mob> mobs = new LinkedList<Mob>();
 	private static HashMap<String, Item> items = new HashMap<String, Item>();
-	private static final int RESOLUTION = 500;
+	private static final int RESOLUTION = 800;
 	private static HashMap<String, String> hud = new HashMap<String, String>();
 
 	public static void main(String[] args) {
@@ -91,7 +92,8 @@ public class Disp {
 									if (!character.isAlive()) {
 										Square square = (Square)matrix.getNode(character.getX(), character.getY());
 										square.removeCharacter();
-										HashMap<String, Item> loot = character.removeInventory();
+										HashMap<String, Item> loot = character.getInventory();
+										character.clearInventory();
 										for (Item item : loot.values()) {
 											square.addItem(item);
 										}
@@ -270,7 +272,7 @@ public class Disp {
 		}
 		
 		updateHud();
-		drawingwithpen(775, 50, hud);
+		drawingwithpen(RESOLUTION - 10, 50, hud);
 	}
 
 	public static void addMob(String name, int health, int damage, int x, int y) {
@@ -383,8 +385,8 @@ public class Disp {
 		matrix.createWall(15, 1);
 		matrix.createVictoryBox(11, 11);
 
-		addMob("Zombie1", 100, 1, 23, 17);
-		addMob("Zombie2", 100, 1, 5, 23);
+		addMob("Zombie1", 100, 1, 13, 15);
+		addMob("Zombie2", 100, 1, 13, 10);
 	}
 	
 	public static void makeLevel1() {

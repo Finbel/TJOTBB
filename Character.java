@@ -184,10 +184,12 @@ public class Character {
         return inventory.remove(name);
     }
     
-    public HashMap<String, Item> removeInventory() {
-    	HashMap<String, Item> removedInventory = inventory;
+    public HashMap<String, Item> getInventory() {
+    	return inventory;
+    }
+    
+    public void clearInventory() {
     	inventory.clear();
-    	return removedInventory;
     }
     
     public boolean move(Matrix matrix, Square destination) {
@@ -270,6 +272,6 @@ public class Character {
             itemsString += "\n" + key + ";";
         }
         
-        return itemsString.substring(0, itemsString.length()-2) + ".";
+        return itemsString.substring(0, itemsString.length()-1) + ".";
     }
 }
