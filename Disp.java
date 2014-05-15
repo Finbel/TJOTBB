@@ -2,6 +2,7 @@ package Main;
 
 import static org.lwjgl.opengl.GL11.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Random;
@@ -11,13 +12,22 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
+import org.newdawn.slick.SlickException;
+import org.newdawn.slick.UnicodeFont;
+import org.newdawn.slick.font.effects.ColorEffect;
+
 
 public class Disp {
+	private static UnicodeFont font;
+	private HashMap<String, String> myBody;
+	private int resolution;
+	
 	private static Matrix matrix;
 	private static Player player;
 	private static LinkedList<Mob> mobs = new LinkedList<Mob>();
 	private static HashMap<String, Item> items = new HashMap<String, Item>();
-	private static final int RESOLUTION = 500;
+	private static final int RESOLUTION = 800;
+	private static HashMap<String, String> hud = new HashMap<String, String>();
 
 	public static void main(String[] args) {
 		makeLevel1();
@@ -25,6 +35,7 @@ public class Disp {
 		try {
 			Display.setDisplayMode(new DisplayMode(RESOLUTION, RESOLUTION));
 			Display.create();
+			Display.sync(30);
 			Display.setTitle("TJOTBB");
 		} catch (LWJGLException e) {
 			// TODO Auto-generated catch block
@@ -34,6 +45,7 @@ public class Disp {
 		glLoadIdentity(); // Resets any previous projection matrices
 		glOrtho(0, RESOLUTION, RESOLUTION, 0, 1, -1);
 		glMatrixMode(GL_MODELVIEW);
+		setUpFonts();
 		while (!Display.isCloseRequested()) {
 			int turns = 0;
 			glClear(GL_COLOR_BUFFER_BIT);
@@ -159,6 +171,7 @@ public class Disp {
 	public static void draw() {
 		int nodeSize = nodeSize();
 		int size = matrix.getSize();
+
 		for (int i = 0; i < size; i++) {
 			for (int j = 0; j < size; j++) {
 				Node node = matrix.getNode(i, j);
@@ -215,6 +228,16 @@ public class Disp {
 				}
 			}
 		}
+		
+		//HP
+		updateHud();
+		drawingwithpen(200, 200, hud);
+		//INVENTORY
+		//TimerDemo.drawingwithpen(RESOLUTION, 200,200, "THE SKY IS THE LIMIT");
+		//TimerDemo.drawingwithpen(RESOLUTION, 200,200, "THE SKY IS THE LIMIT");
+		//ammo
+		//wTimerDemo.drawingwithpen(RESOLUTION, 200,200, "THE SKY IS THE LIMIT");
+		
 	}
 	
 	public static void initializeLevel(int size) {
@@ -253,8 +276,8 @@ public class Disp {
 		matrix.createWall(15, 1);
 
 		
-		addMob("Zombie1", 100, 25, 23, 17);
-		addMob("Zombie2", 100, 25, 5, 23);
+		addMob("Zombie1", 100, 1, 23, 17);
+		addMob("Zombie2", 100, 100, 5, 23);
 
 		addPlayer("Filth", 100, 25, 1, 1);
 	}
@@ -280,10 +303,47 @@ public class Disp {
 	public static void addPlayer(String name, int health, int damage, int x,int y) {
 		player = new Player(name, health, damage, x, y);
 		((Square) matrix.getNode(x, y)).addCharacter(player);
+		updateHud();
+	}
+	
+	public static void updateHud() {
+		hud.put("hp", "HP: " + player.getHealth());
+		hud.put("damage", "Damage: " + player.getDamage());
+		hud.put("inventory", "Inventory: " + player.getInventoryString());
 	}
 	
 	public static int nodeSize() {
 		int size = matrix.getSize();
 		return RESOLUTION/size;
 	}
+
+
+
+		private static void setUpFonts() {
+			java.awt.Font awtFont = new java.awt.Font("ComicSans",
+					java.awt.Font.PLAIN, 14);
+			font = new UnicodeFont(awtFont);
+			font.getEffects().add(new ColorEffect(java.awt.Color.white));
+			font.addAsciiGlyphs();
+
+			try {
+				font.loadGlyphs();
+			} catch (SlickException e) {
+				e.printStackTrace();
+			}
+		}
+
+		public static void drawingwithpen(int whatX, int whatY, HashMap<String, String> myBody) {
+			int i = 0;
+			for(String string : myBody.values()) {
+				font.drawString(whatX, whatY + i, string);
+				i += 15;
+			}
+			glDisable(GL_TEXTURE_2D);
+
+			Display.update();
+		
+
+	}
 }
+

@@ -141,6 +141,10 @@ public class Character {
         return inventory.get(name);
     }
     
+    public int getDamage() {
+        return damage;
+    }
+    
     public boolean hasItem(Item item) {
         return inventory.containsValue(item);
     }
