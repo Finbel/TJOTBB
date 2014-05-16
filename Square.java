@@ -45,13 +45,17 @@ public class Square extends Node
     public void addItem(Item item) {
         items.put(item.getName(), item);
     }
+    
     /**
-     * creates a dead character that is an object instead of a character
+     * creates a dead character, which means it is
+     * apathetic.
+     * 
      * @param character
      */
     public void addDeadCharacter(Character character) {
         deadCharacter = character;
     }
+    
     /**
      * returns the dead character
      * 
@@ -60,6 +64,7 @@ public class Square extends Node
     public Character getDeadCharacter() {
         return deadCharacter;
     }
+    
     /**
      * creates a character in the room
      * @param character
@@ -67,14 +72,16 @@ public class Square extends Node
     public void addCharacter(Character character) {
         this.character = character;
     }
+    
     /**
      * removes teh character from the room
      */
     public void removeCharacter() {
     	character = null;
     }
+    
     /**
-     * removes the item in teh room
+     * removes the item(s) in teh room
      */
     public void removeItems() {
         items.clear();

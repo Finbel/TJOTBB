@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 
 /**
- * Holds a matrix of nodes.
+ * A matrix of nodes.
  * 
  * The coordinate system is oriented as such:
  *   ---------------> x
@@ -19,12 +19,9 @@ import java.util.LinkedList;
 public class Matrix {
 	// A hashmap containing one hashmap for every x-coordinate.
 	private final HashMap<Integer, HashMap<Integer, Node>> matrix;
-	// The size of the hashmap (the length of one side).
 	private int size;
-	
 	/**
 	 * Constructs a matrix, size n*n.
-	 * All Nodes are Spaces by default.
 	 * 
 	 * @param n
 	 */
@@ -65,7 +62,7 @@ public class Matrix {
 	}
 	
 	/**
-	 * Make the node at (x, y) a Wall.
+	 * Make the node a wall.
 	 * 
 	 * @param x The x-coordinate.
 	 * @param y The y-coordinate.
@@ -81,13 +78,12 @@ public class Matrix {
 	}
 	
 	/**
-	 * Make the node at (x, y) a Door.
+	 * Make the node a door.
 	 * 
 	 * @param x The x-coordinate.
 	 * @param y The y-coordinate.
-	 * @param unlocked Whether unlocked or not (always true if key
-	 * is null).
-     * @param key The key that fits the lock (set it to null if there's
+	 * @param unlocked The exit's status.
+     * @param key The key that fits the lock (null if there's
      * no lock).
 	 */
 	public void createDoor(int x, int y, boolean unlocked, Item key) {
@@ -96,7 +92,7 @@ public class Matrix {
 	}
 	
 	/**
-	 * Make the node at (x, y) a Space.
+	 * Make the node a space.
 	 * 
 	 * @param x The x-coordinate.
 	 * @param y The y-coordinate.
@@ -107,12 +103,12 @@ public class Matrix {
 	}
 	
 	/**
-	 * Returns all orthogonal neighbours to the Node with
+	 * Returns all neighbours to the Node with
 	 * the coordinates x and y.
 	 * 
 	 * @param x
 	 * @param y
-	 * @return all orthogonal neighbours.
+	 * @return all neighbours.
 	 */
 	public LinkedList<Node> neighbours(int x, int y) {
 		LinkedList<Node> neighbours = new LinkedList<Node>();
@@ -146,7 +142,7 @@ public class Matrix {
 	}
 	
 	/**
-	 * Returns all neighbours (including diagonal) to the Node with
+	 * Returns all neighbours (inluding diagonal) to the Node with
 	 * the coordinates x and y.
 	 * 
 	 * @param x
@@ -157,6 +153,7 @@ public class Matrix {
 		LinkedList<Node> neighbours = new LinkedList<Node>();
 		int thisX = x - 1;
 		int thisY = y - 1;
+		// Prevent Nodes on the edge of the map from being added as neighbours.
 		for (int i = 0; i < 3; i++) {
 			for (int j = 0; j < 3; j++) {
 				if (i == 1 && j == 1) {
@@ -192,25 +189,10 @@ public class Matrix {
 		string += "\nKey: '/|/', ' | ' and ' O ' represent walls, doors and spaces, respectively.";
 		return string;
 	}
-	
-	/**
-	 * Returns the size of the matrix.
-	 * 
-	 * @return size
-	 */
 	public int getSize() {
+		//TBD!
 		return size;
 	}
-	
-	/**
-	 * Creates a column of Walls in the
-	 * column at the x-position xLevel, from yStart
-	 * to yFinish.
-	 * 
-	 * @param xLevel the column's x-position.
-	 * @param yStart the starting y-coordinate.
-	 * @param yFinish the ending y-coordinate.
-	 */
 	public void columnWall(int xLevel, int yStart, int yFinish){
 		for (int i = yStart; i <= yFinish; i++) {
 			createWall(xLevel, i);
@@ -218,15 +200,6 @@ public class Matrix {
 		}
 	}
 	
-	/**
-	 * Creates a row of Walls in the
-	 * row at y-position yLevel, from xStart
-	 * to xFinish.
-	 * 
-	 * @param xLevel the row's y-position.
-	 * @param yStart the starting x-coordinate.
-	 * @param yFinish the ending x-coordinate.
-	 */
 	public void rowWall(int yLevel, int xStart, int xFinish){
 		for (int i = xStart; i <= xFinish; i++) {
 			createWall(i, yLevel);
@@ -236,26 +209,11 @@ public class Matrix {
 
 	/** 
 	 * Returns a list of nodes denoting the 
-	 * the shortest route from initial to target,
-	 * taking into account characters can only walk
-	 * orthogonally.
-	 * Stops searching after searching for the number
-	 * of iterations defined by range, to prevent
-	 * extreme search times.
-	 * If bulletPath is true, it will allow the route
-	 * taking diagonal steps, in order to calculate
-	 * straight lines of fire. The route is also
-	 * allowed to go straight through walls for this
-	 * reason.
-	 * 
-	 * @param initial The Node to start at.
-	 * @param target The Node to find.
-	 * @param range The amount of iterations allowed
-	 * (if too high the algorithm may get slow,
-	 * especially when not calculating a bullet path).
+	 * the shortest route to the player's location.
+	 * @param matrix The matrix to analyze.
+	 * @param player The player to find.
 	 * @param bulletPath Whether to calculate bulletpath (diagonal; discriminates walls).
-	 * @return a list of Nodes denoting the shortest route. Returns null
-	 * if the target wasn't reached within range.
+	 * @return a list of the shortest route.
 	*/ 
 	public ArrayList<Node> shortestRoute(Node initial, Node target, int range, boolean bulletPath) {
 		HashMap<Node, Boolean> visited = new HashMap<Node, Boolean>();
@@ -264,7 +222,7 @@ public class Matrix {
 				visited.put(getNode(i, j), false);
 			}
 		}
-		// This is a BFS algorithm with the exception that it stores a list of
+		// This is a regular BFS algorithm with the exception that it stores a list of
 		// all different routes until it finds the sought after vertex.
 		LinkedList<Node> q = new LinkedList<Node>();
 		ArrayList<ArrayList<Node>> routes = new ArrayList<ArrayList<Node>>();
@@ -344,12 +302,11 @@ public class Matrix {
 	}
 		
 	/**
-	 * Returns the route which has the current Node as its
+	 * Returns the route which has the current vertex as its
 	 * latest addition. This means it is the current route.
-	 * Returns null if none of the routes matched. Used
-	 * by the shortestRoute method.
+	 * Returns null if none of the routes matched.
 	 * 
-	 * @param current the current Node.
+	 * @param current the current vertex.
 	 * @param routes the list of different routes to analyze.
 	 * @return the current route.
 	 */ 

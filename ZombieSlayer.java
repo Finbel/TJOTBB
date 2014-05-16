@@ -1,11 +1,16 @@
 package Main;
 
 import java.util.ArrayList;
+
 /**
  * this is my weapon this is my gun.....
  * this is a weapon class
- * @author tor
- *
+ * Creates a weapon with the damage and
+ * range as parameters.
+ * 
+ * @param damage
+ * @param range How many Nodes its shot can reach (utilizes
+ * diagonal pathfinding ("bulletPath")).
  */
 public class ZombieSlayer extends Item {
 	private int damage, range;
@@ -14,6 +19,7 @@ public class ZombieSlayer extends Item {
 		this.damage = damage;
 		this.range = range;
 	}
+	
 	/**
 	 * returns the damage the weapon does
 	 * @return
@@ -21,6 +27,7 @@ public class ZombieSlayer extends Item {
 	public int getDamage() {
 		return damage;
 	}
+	
 	/**
 	 * through the use of x and y cordinates finds the
 	 * node which your mouse is aiming at
@@ -59,6 +66,7 @@ public class ZombieSlayer extends Item {
 		}
 		return null;
 	}
+	
 	/**
 	 * checks that you are not trying to shoot through walls
 	 * @param matrix

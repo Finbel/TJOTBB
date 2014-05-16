@@ -2,7 +2,6 @@ package Main;
 /**
  * this is a wall, like many other walls in games,
  *  they can't be walked through
- * @author tor
  *
  */
 public class Wall extends Node
