@@ -40,6 +40,9 @@ public class Disp {
 	public static void main(String[] args) {
 		makeLevel1();
 
+		/**
+		 * creates the display with the title TJOTBB "THE JOURNEY OF THE BLUE BOX"
+		 */
 		try {
 			Display.setDisplayMode(new DisplayMode(RESOLUTION+300, RESOLUTION));
 			Display.create();
@@ -48,12 +51,18 @@ public class Disp {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		/**
+		 * initilize GL
+		 */
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity(); // Resets any previous projection matrices
 		glOrtho(0, RESOLUTION + 300, RESOLUTION, 0, 1, -1);
 		glMatrixMode(GL_MODELVIEW);
 		setUpFonts();
-		
+		/**
+		 * creates a while loop that checks for the close window feature
+		 * 
+		 */
 		while (!Display.isCloseRequested()) {
 			int turns = 0;
 			glClear(GL_COLOR_BUFFER_BIT);
@@ -62,12 +71,19 @@ public class Disp {
 			while (true) {
 				draw();
 				Display.update();
+				/**
+				 * a check for the player pressing the escape button
+				 * in order to exit the game
+				 */
 				if (Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)) {
 					System.out.print("FILTH");
 					Display.destroy();
 					System.exit(0);
 					break;
 				}
+				/**
+				 * checks for next button press
+				 */
 				while (Keyboard.next()) {
 					draw();
 					Display.update();
@@ -77,7 +93,9 @@ public class Disp {
 						System.exit(0);
 						break;
 					}
-					
+					/**
+					 * shoots a target
+					 */
 					if (Keyboard.getEventKey() == Keyboard.KEY_SPACE) {
 						if (!Keyboard.getEventKeyState()) {
 							if (player.hasItem(items.get("zombieslayer"))) {
@@ -105,7 +123,9 @@ public class Disp {
 							}
 						}
 					}
-					
+					/**
+					 * opens and closes doors
+					 */
 					if (Keyboard.getEventKey() == Keyboard.KEY_LCONTROL) {
 						if (!Keyboard.getEventKeyState()) {
 							if(player.tryOpen(matrix)) {
@@ -113,7 +133,9 @@ public class Disp {
 							}
 						}
 					}
-
+					/**
+					 * moves player up, down, left and right using wsad
+					 */
 					if (Keyboard.getEventKey() == Keyboard.KEY_W) {
 						if (!Keyboard.getEventKeyState()) {
 							Node neighbour = matrix.getNode(player.getX(),
@@ -156,26 +178,39 @@ public class Disp {
 						}
 					}
 					
-					// LEVEL ADVANCEMENT
+					/**
+					 * checks if the map should be swaped for next level
+					 */
 					if(matrix.getNode(player.getX(), player.getY()) instanceof VictoryBox) {
 						nextLevel++;
 						makeLevel(nextLevel);
 					}
-					
+					/**
+					 * checks if the turn has been done
+					 */
 					if (turns >= 2) {
 						mobsMove(3);
 						turns = 0;
 					}
+					/**
+					 * restarts game if you die
+					 */
 					if (!player.isAlive) {
 						 System.out.println("DEAD AND ROTTEN FILTH");
-						 System.exit(0);
+						 makeLevel(nextLevel);
 					}
 				}
 			}
 		}
 	}
-	
+	/**
+	 * decides which map to draw
+	 * @param level
+	 */
 	private static void makeLevel(int level) {
+		if (level == 1) {
+			makeLevel1();
+		}
 		if (level == 2) {
 			makeLevel2();
 		}
@@ -183,7 +218,10 @@ public class Disp {
 			makeLevel3();
 		}
 	}
-
+	/**
+	 * moving mob, k is the amount of steps the mob can make
+	 * @param k
+	 */
 	public static void mobsMove(int k) {
 		 for (Mob mob : mobs) {
 			 for (int i = 0; i < k; i++) {
@@ -194,7 +232,9 @@ public class Disp {
 		 }
 	}
 	
-
+	/**
+	 * draws the map and the HUD
+	 */
 	public static void draw() {
 		int nodeSize = nodeSize();
 		int size = matrix.getSize();
@@ -274,43 +314,76 @@ public class Disp {
 		updateHud();
 		drawingwithpen(RESOLUTION - 10, 50, hud);
 	}
-
+	/**
+	 * creates mob
+	 * @param name
+	 * @param health
+	 * @param damage
+	 * @param x
+	 * @param y
+	 */
 	public static void addMob(String name, int health, int damage, int x, int y) {
 		Mob mob = new Mob(name, health, damage, x, y, 5);
 		mobs.add(mob);
 		((Square) matrix.getNode(x, y)).addCharacter(mob);
 	}
-	
+	/**
+	 * creates Key
+	 * @param name
+	 * @param questItem
+	 * @param x
+	 * @param y
+	 */
 	public static void addKey(String name, boolean questItem, int x, int y) {
 		Key item = new Key(name, questItem);
 		items.put(item.getName(), item);
 		((Square) matrix.getNode(x, y)).addItem(item);
 	}
-	
+	/**
+	 * creates weapon
+	 * @param name
+	 * @param questItem
+	 * @param damage
+	 * @param range
+	 * @param x
+	 * @param y
+	 */
 	public static void addZombieSlayer(String name, boolean questItem, int damage, int range, int x, int y) {
 		ZombieSlayer item = new ZombieSlayer(name, questItem, damage, range);
 		items.put(item.getName(), item);
 		((Square) matrix.getNode(x, y)).addItem(item);
 	}
-
+	/**
+	 * adds player
+	 * @param x
+	 * @param y
+	 */
 	public static void addPlayer(int x, int y) {
 		player = new Player("player", 100, 0, x, y);
 		((Square) matrix.getNode(x, y)).addCharacter(player);
 		updateHud();
 	}
-	
+	/**
+	 * updates HUD
+	 */
 	public static void updateHud() {
 		hud.put("hp", "HP: " + player.getHealth());
 		hud.put("inventory", "Inventory: " + player.getInventoryString());
 		hud.put("damage", "Damage: " + player.getDamage());
 	}
-	
+	/**
+	 * returns the node size in order to make differnt sized displays
+	 *  inorder for your choice of screen size
+	 * @return
+	 */
 	public static int nodeSize() {
 		int size = matrix.getSize();
 		return RESOLUTION/size;
 	}
 	
-	//------------------------------------------------TEXTPRINTING
+	/**
+	 * sets up font and draws it
+	 */
 
 	private static void setUpFonts() {
 		java.awt.Font awtFont = new java.awt.Font("ComicSans",
@@ -344,7 +417,12 @@ public class Disp {
 		Display.update();
 	}
 	
-	// --------------------------------------------------LEVEL CREATION
+	/**
+	 * initilizes each new map
+	 * @param size
+	 * @param spawnX
+	 * @param spawnY
+	 */
 	
 	public static void initializeLevel(int size, int spawnX, int spawnY) {
 		// creates borders.

@@ -1,5 +1,10 @@
 package Main;
-
+/**
+ * this is unimplemented due to "lack" of time and bad game design shame on
+ * you Tor ,,, ;,,; ,,,
+ * @author tor
+ *
+ */
 public class HealthPack extends Item {
 	private int damage, range;
 	public HealthPack(String name, boolean questItem, int damage, int range) {

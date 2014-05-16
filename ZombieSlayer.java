@@ -1,7 +1,12 @@
 package Main;
 
 import java.util.ArrayList;
-
+/**
+ * this is my weapon this is my gun.....
+ * this is a weapon class
+ * @author tor
+ *
+ */
 public class ZombieSlayer extends Item {
 	private int damage, range;
 	public ZombieSlayer(String name, boolean questItem, int damage, int range) {
@@ -9,11 +14,26 @@ public class ZombieSlayer extends Item {
 		this.damage = damage;
 		this.range = range;
 	}
-	
+	/**
+	 * returns the damage the weapon does
+	 * @return
+	 */
 	public int getDamage() {
 		return damage;
 	}
-
+	/**
+	 * through the use of x and y cordinates finds the
+	 * node which your mouse is aiming at
+	 * then looks if have the range, as well as
+	 * makes sure there is no wall
+	 * because guns can't shoot through walls
+	 * @param matrix
+	 * @param player
+	 * @param ns
+	 * @param shootX
+	 * @param shootY
+	 * @return
+	 */
 	public Character shoot(Matrix matrix, Player player, int ns, int shootX, int shootY) {
 		int nx = Math.round(shootX/ns);
 		int ny = Math.round(shootY/ns);
@@ -39,7 +59,14 @@ public class ZombieSlayer extends Item {
 		}
 		return null;
 	}
-	
+	/**
+	 * checks that you are not trying to shoot through walls
+	 * @param matrix
+	 * @param location
+	 * @param target
+	 * @param distance
+	 * @return
+	 */
 	private boolean validBulletPath(Matrix matrix, Square location, Square target, int distance) {
 		ArrayList<Node> shortestRoute = matrix.shortestRoute(location, target, distance, true);
 		if (shortestRoute == null) {

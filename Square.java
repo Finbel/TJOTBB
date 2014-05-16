@@ -45,35 +45,55 @@ public class Square extends Node
     public void addItem(Item item) {
         items.put(item.getName(), item);
     }
-    
+    /**
+     * creates a dead character that is an object instead of a character
+     * @param character
+     */
     public void addDeadCharacter(Character character) {
         deadCharacter = character;
     }
-    
+    /**
+     * returns the dead character
+     * 
+     * @return
+     */
     public Character getDeadCharacter() {
         return deadCharacter;
     }
-    
+    /**
+     * creates a character in the room
+     * @param character
+     */
     public void addCharacter(Character character) {
         this.character = character;
     }
-    
+    /**
+     * removes teh character from the room
+     */
     public void removeCharacter() {
     	character = null;
     }
-    
+    /**
+     * removes the item in teh room
+     */
     public void removeItems() {
         items.clear();
     }
     
-
+    /**
+     *returns the item(s) in the room 
+     * @return
+     */
     public HashMap<String, Item> getItems() {
     	if (items.isEmpty()) {
     		return null;
     	}
         return items;
     }
-    
+    /**
+     * returns the character in the room
+     * @return
+     */
     public Character getCharacter() {
     	return character;
     }
